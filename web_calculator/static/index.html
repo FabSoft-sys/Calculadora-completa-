@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Calculadora Científica Web</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input, button { font-size: 1.2em; margin: 5px; }
+        #result { margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Calculadora Científica Web</h1>
+    <div>
+        <input type="number" id="inputA" placeholder="Número A" />
+        <input type="number" id="inputB" placeholder="Número B" />
+    </div>
+    <div>
+        <button onclick="calculate('add')">Adicionar (+)</button>
+        <button onclick="calculate('subtract')">Subtrair (-)</button>
+        <button onclick="calculate('multiply')">Multiplicar (*)</button>
+        <button onclick="calculate('divide')">Dividir (/)</button>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        async function calculate(operation) {
+            const a = parseFloat(document.getElementById('inputA').value);
+            const b = parseFloat(document.getElementById('inputB').value);
+            if (isNaN(a) || isNaN(b)) {
+                alert('Por favor, insira números válidos em ambos os campos.');
+                return;
+            }
+            const response = await fetch('/api/' + operation, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ a: a, b: b })
+            });
+            const data = await response.json();
+            if (data.error) {
+                document.getElementById('result').textContent = 'Erro: ' + data.error;
+            } else {
+                document.getElementById('result').textContent = 'Resultado: ' + data.result;
+            }
+        }
+    </script>
+</body>
+</html>
